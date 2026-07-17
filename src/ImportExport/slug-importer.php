@@ -3,20 +3,40 @@ if (!defined('ABSPATH') || !is_admin()) {
     exit;
 }
 
-function btc_handle_csv_upload() {
+function bcm_handle_csv_upload() {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
     if (
-        !isset($_FILES['btc_csv_file']) ||
-        !file_exists($_FILES['btc_csv_file']['tmp_name']) ||
+        !isset($_FILES['bcm_csv_file']) ||
+        !file_exists($_FILES['bcm_csv_file']['tmp_name']) ||
         !isset($_POST['taxonomy']) ||
         !isset($_POST['term_name']) ||
-        !check_admin_referer('btc_create_terms')
+        !check_admin_referer('bcm_create_terms')
     ) {
         return;
     }
 
     $taxonomy = sanitize_text_field($_POST['taxonomy']);
     $term_name = sanitize_text_field($_POST['term_name']);
-    $file = $_FILES['btc_csv_file']['tmp_name'];
+    $file = $_FILES['bcm_csv_file']['tmp_name'];
+    $filename = isset($_FILES['bcm_csv_file']['name']) ? sanitize_file_name($_FILES['bcm_csv_file']['name']) : '';
+
+    if (strtolower(pathinfo($filename, PATHINFO_EXTENSION)) !== 'csv') {
+        echo '<div class="notice notice-error"><p>Please upload a valid .csv file.</p></div>';
+        return;
+    }
+
+    if (!empty($_FILES['bcm_csv_file']['size']) && (int) $_FILES['bcm_csv_file']['size'] > 10485760) {
+        echo '<div class="notice notice-error"><p>CSV files must be 10 MB or smaller.</p></div>';
+        return;
+    }
+
+    if (!is_uploaded_file($file)) {
+        echo '<div class="notice notice-error"><p>The uploaded file could not be verified.</p></div>';
+        return;
+    }
 
     $handle = fopen($file, 'r');
     if (!$handle) {

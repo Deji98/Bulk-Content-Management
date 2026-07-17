@@ -1,0 +1,23 @@
+{
+  "name": "deji98/bulk-content-management",
+  "description": "Manage, generate, import, export, and assign WordPress posts and taxonomy terms in bulk.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Adesina Adedeji"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "BulkContentManagement\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {},
+  "scripts": {
+    "lint": "php -l bulk-content-management.php && php -l plugin.php && php -l src/Admin/Assets.php && php -l src/Core/functions.php && php -l src/ImportExport/slug-importer.php"
+  }
+}
